@@ -4,7 +4,9 @@ class NumberGenerator {
 
   int get counter => _counter;
 
-  NumberGenerator._internal() {}
+  NumberGenerator._internal() {
+    _instance = this;
+  }
 
   factory NumberGenerator() => _instance ??= NumberGenerator._internal();
 
