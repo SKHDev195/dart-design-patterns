@@ -1,10 +1,14 @@
-class NumberGenerator {
+abstract class Singleton {
+  Singleton._internal();
+}
+
+class NumberGenerator extends Singleton {
   static NumberGenerator? _instance;
-  static int _counter = 0;
+  int _counter = 0;
 
   int get counter => _counter;
 
-  NumberGenerator._internal() {
+  NumberGenerator._internal() : super._internal() {
     _instance = this;
   }
 
