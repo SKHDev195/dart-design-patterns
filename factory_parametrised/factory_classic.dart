@@ -51,26 +51,4 @@ enum ShipType {
   serenity,
 }
 
-sealed class SpaceShipFactory {
-  SpaceShipFactory._();
-
-  static SpaceShip createSpaceShip(ShipType shipType) {
-    SpaceShip result = switch (shipType) {
-      ShipType.milleniumFalcon => MilleniumFalcon(),
-      ShipType.uNSCInfinity => UNSCInfinity(),
-      ShipType.ussEnterprise => USSEnterprise(),
-      ShipType.serenity => Serenity(),
-    };
-    return result;
-  }
-}
-
-void main() {
-  SpaceShip milleniumFalcon =
-      SpaceShipFactory.createSpaceShip(ShipType.milleniumFalcon);
-  print(milleniumFalcon.displayName);
-
-  SpaceShip ussEnterprise =
-      SpaceShipFactory.createSpaceShip(ShipType.ussEnterprise);
-  print(ussEnterprise.displayName);
-}
+abstract class 
