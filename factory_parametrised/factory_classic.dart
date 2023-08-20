@@ -44,11 +44,42 @@ final class Serenity extends SpaceShip {
   }
 }
 
-enum ShipType {
-  milleniumFalcon,
-  uNSCInfinity,
-  ussEnterprise,
-  serenity,
+abstract interface class SpaceShipFactory {
+  createSpaceShip() {}
 }
 
-abstract class 
+final class MilleniumFalconFactory implements SpaceShipFactory {
+  @override
+  createSpaceShip() {
+    return MilleniumFalcon();
+  }
+}
+
+final class UNSCInfinityFactory implements SpaceShipFactory {
+  @override
+  createSpaceShip() {
+    return UNSCInfinity();
+  }
+}
+
+final class USSEnterpriseFactory implements SpaceShipFactory {
+  @override
+  createSpaceShip() {
+    return UNSCInfinity();
+  }
+}
+
+final class SerenityFactory implements SpaceShipFactory {
+  @override
+  createSpaceShip() {
+    return Serenity();
+  }
+}
+
+void main() {
+  SpaceShip milleniumFalcon = MilleniumFalconFactory().createSpaceShip();
+  print(milleniumFalcon.displayName);
+
+  SpaceShip ussEnterprise = USSEnterpriseFactory().createSpaceShip();
+  print(ussEnterprise.displayName);
+}
