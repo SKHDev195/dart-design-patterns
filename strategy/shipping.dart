@@ -75,3 +75,24 @@ class ShippingCostCalculatorService {
     return 9.25;
   }
 }
+
+abstract interface class ShippingCostsCalculator {
+  double calculateCosts(Order order);
+}
+
+final class ShippingCostsCalculatorPurulator
+    implements ShippingCostsCalculator {
+  double calculateCosts(Order order) => 5.00;
+}
+
+final class ShippingCostsCalculatorUPS implements ShippingCostsCalculator {
+  double calculateCosts(Order order) => 7.25;
+}
+
+final class ShippingCostsCalculatorFedEx implements ShippingCostsCalculator {
+  double calculateCosts(Order order) => 9.25;
+}
+
+final class ShippingCostsCalculatorAmazon implements ShippingCostsCalculator {
+  double calculateCosts(Order order) => 3.25;
+}
