@@ -45,9 +45,26 @@ class Order {
 
 class ShippingCostCalculatorService {
   double calculateShippingCost(
-    ShippingCostContext context,
     Order order,
   ) {
+    ShippingCostContext context = switch (order.shippingMethod) {
+      ShippingOptions.amazon => ShippingCostContext()
+        ..setShippingCostsCalculator(
+          ShippingCostsCalculatorAmazon(),
+        ),
+      ShippingOptions.fedex => ShippingCostContext()
+        ..setShippingCostsCalculator(
+          ShippingCostsCalculatorFedEx(),
+        ),
+      ShippingOptions.purulator => ShippingCostContext()
+        ..setShippingCostsCalculator(
+          ShippingCostsCalculatorPurulator(),
+        ),
+      ShippingOptions.ups => ShippingCostContext()
+        ..setShippingCostsCalculator(
+          ShippingCostsCalculatorUPS(),
+        ),
+    };
     return context.calculateCosts(
       order,
     );
@@ -99,31 +116,28 @@ void main() {
   Address testDestination = Address()
     ..addressLine1 = 'UK, London'
     ..contactName = 'John';
-  Order order = Order(
+  Order orderFirst = Order(
     ShippingOptions.amazon,
+    testDestination,
+    testOrigin,
+  );
+  Order orderSecond = Order(
+    ShippingOptions.purulator,
     testDestination,
     testOrigin,
   );
   ShippingCostCalculatorService shippingCostCalculatorService =
       ShippingCostCalculatorService();
 
-  ShippingCostContext context = ShippingCostContext()
-    ..setShippingCostsCalculator(
-      ShippingCostsCalculatorAmazon(),
-    );
-
   print(
     shippingCostCalculatorService.calculateShippingCost(
-      context,
-      order,
+      orderFirst,
     ),
   );
 
-  context.setShippingCostsCalculator(
-    ShippingCostsCalculatorFedEx(),
-  );
-
   print(
-    shippingCostCalculatorService.calculateShippingCost(context, order),
+    shippingCostCalculatorService.calculateShippingCost(
+      orderSecond,
+    ),
   );
 }
