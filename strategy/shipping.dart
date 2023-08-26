@@ -1,5 +1,3 @@
-/// Shipping address
-///
 class Address {
   late String contactName;
   late String addressLine1;
@@ -10,18 +8,23 @@ class Address {
   late String postalCode;
 }
 
-/// Shippers you can choose from
-///
-enum ShippingOptions { ups, fedex, purulator }
+enum ShippingOptions {
+  ups,
+  fedex,
+  purulator,
+  amazon,
+}
 
-/// Order entity
-///
 class Order {
   late ShippingOptions _shippingMethod;
   late Address _destination;
   late Address _origin;
 
-  Order(ShippingOptions shippingMethod, Address destination, Address origin) {
+  Order(
+    ShippingOptions shippingMethod,
+    Address destination,
+    Address origin,
+  ) {
     _shippingMethod = shippingMethod;
     _destination = destination;
     _origin = origin;
@@ -40,39 +43,14 @@ class Order {
   }
 }
 
-/// Shipping cost calculation service
-///
 class ShippingCostCalculatorService {
-  double calculateShippingCost(Order order) {
-    switch (order.shippingMethod) {
-      case ShippingOptions.fedex:
-        return calculateForFedEx(order);
-
-      case ShippingOptions.ups:
-        return calculateForUPS(order);
-
-      case ShippingOptions.purulator:
-        return calculateForPurulator(order);
-
-      default:
-        throw Exception("Unknown carrier");
-    }
-  }
-
-  ///////////////////////////////////////////////////////////////
-  /// Terrible coding practice
-  ///
-  /// Should be handled through a strategy pattern
-  double calculateForPurulator(Order order) {
-    return 5.00;
-  }
-
-  double calculateForUPS(Order order) {
-    return 7.25;
-  }
-
-  double calculateForFedEx(Order order) {
-    return 9.25;
+  double calculateShippingCost(
+    ShippingCostContext context,
+    Order order,
+  ) {
+    return context.calculateCosts(
+      order,
+    );
   }
 }
 
@@ -95,4 +73,57 @@ final class ShippingCostsCalculatorFedEx implements ShippingCostsCalculator {
 
 final class ShippingCostsCalculatorAmazon implements ShippingCostsCalculator {
   double calculateCosts(Order order) => 3.25;
+}
+
+final class ShippingCostContext {
+  late ShippingCostsCalculator _shippingCostsCalculator;
+  ShippingCostsCalculator get shippingCostsCalculator =>
+      _shippingCostsCalculator;
+
+  void setShippingCostsCalculator(
+      ShippingCostsCalculator shippingCostsCalculator) {
+    _shippingCostsCalculator = shippingCostsCalculator;
+  }
+
+  double calculateCosts(Order order) {
+    return _shippingCostsCalculator.calculateCosts(
+      order,
+    );
+  }
+}
+
+void main() {
+  Address testOrigin = Address()
+    ..addressLine1 = 'Cyprus, Limassol'
+    ..contactName = 'Jake';
+  Address testDestination = Address()
+    ..addressLine1 = 'UK, London'
+    ..contactName = 'John';
+  Order order = Order(
+    ShippingOptions.amazon,
+    testDestination,
+    testOrigin,
+  );
+  ShippingCostCalculatorService shippingCostCalculatorService =
+      ShippingCostCalculatorService();
+
+  ShippingCostContext context = ShippingCostContext()
+    ..setShippingCostsCalculator(
+      ShippingCostsCalculatorAmazon(),
+    );
+
+  print(
+    shippingCostCalculatorService.calculateShippingCost(
+      context,
+      order,
+    ),
+  );
+
+  context.setShippingCostsCalculator(
+    ShippingCostsCalculatorFedEx(),
+  );
+
+  print(
+    shippingCostCalculatorService.calculateShippingCost(context, order),
+  );
 }
